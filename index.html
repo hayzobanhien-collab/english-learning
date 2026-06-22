@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EngHub - Học Tiếng Anh Thông Minh</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .flip-card { perspective: 1000px; }
+        .flip-card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+        }
+        .flip-card-back { transform: rotateY(180deg); }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-gray-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 text-white p-2 rounded-xl shadow-md shadow-blue-200">
+                    <i class="fas fa-graduation-cap text-xl"></i>
+                </div>
+                <h1 class="text-xl font-bold text-gray-900 tracking-tight">EngHub <span class="text-blue-600 text-sm font-medium">v1.0</span></h1>
+            </div>
+            <nav class="flex gap-2 bg-gray-100 p-1 rounded-xl">
+                <button onclick="switchTab('flashcards', this)" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold text-blue-600 bg-white shadow-sm transition">
+                    <i class="fas fa-clone mr-2"></i>Flashcards
+                </button>
+                <button onclick="switchTab('quiz', this)" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 transition">
+                    <i class="fas fa-tasks mr-2"></i>Trắc nghiệm
+                </button>
+                <button onclick="switchTab('grammar', this)" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 transition">
+                    <i class="fas fa-book-open mr-2"></i>Ngữ pháp
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-8">
+        
+        <section id="flashcards" class="tab-content block">
+            <div class="max-w-md mx-auto">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Thẻ từ vựng thông minh</h2>
+                    <p class="text-sm text-gray-500 mt-1">Bấm vào thẻ để lật xem định nghĩa và ví dụ thực tế</p>
+                </div>
+                
+                <div id="flashcard" onclick="flipCard()" class="flip-card h-72 w-full cursor-pointer group">
+                    <div class="flip-card-inner w-full h-full relative duration-500 rounded-2xl shadow-xl shadow-gray-200/80">
+                        <div class="flip-card-front bg-white rounded-2xl p-8 flex flex-col justify-between border border-gray-100">
+                            <span class="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full w-max">Vocabulary</span>
+                            <div class="text-center py-4">
+                                <h3 id="card-word" class="text-3xl font-bold text-gray-900 tracking-tight"></h3>
+                                <p id="card-type" class="text-sm text-gray-400 italic mt-1"></p>
+                            </div>
+                            <div class="text-center text-xs text-gray-400">
+                                <i class="fas fa-sync-alt mr-1"></i> Nhấp để xem nghĩa
+                            </div>
+                        </div>
+                        <div class="flip-card-back bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-8 flex flex-col justify-between text-white shadow-inner">
+                            <span class="text-xs font-bold uppercase tracking-wider text-blue-200 bg-white/10 px-2.5 py-1 rounded-full w-max">Meaning</span>
+                            <div class="space-y-4">
+                                <p id="card-detail" class="text-xl font-semibold text-center leading-relaxed"></p>
+                                <p id="card-example" class="text-sm text-blue-100 bg-black/10 p-3 rounded-xl border border-white/5 italic text-center"></p>
+                            </div>
+                            <div class="text-center text-xs text-blue-200 opacity-80">
+                                <i class="fas fa-sync-alt mr-1"></i> Nhấp để quay lại
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mt-6 px-2">
+                    <button onclick="prevCard()" class="bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl shadow-sm transition flex items-center gap-2 text-sm font-medium">
+                        <i class="fas fa-chevron-left text-xs"></i> Trước đó
+                    </button>
+                    <span id="card-progress" class="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">1 / 5</span>
+                    <button onclick="nextCard()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl shadow-md shadow-blue-200 transition flex items-center gap-2 text-sm font-medium">
+                        Tiếp theo <i class="fas fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="quiz" class="tab-content hidden">
+            <div class="max-w-2xl mx-auto bg-white rounded-2xl p-6 sm:p-8 shadow-xl shadow-gray-200/50 border border-gray-100">
+                <div class="flex justify-between items-center border-b border-gray-100 pb-4 mb-6">
+                    <h2 class="text-xl font-bold text-gray-900">Trắc nghiệm nhanh</h2>
+                    <span id="quiz-score-badge" class="text-sm font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Điểm: 0</span>
+                </div>
+                <div id="quiz-box">
+                    <h3 id="quiz-question" class="text-lg font-semibold mb-6 text-gray-800 leading-snug"></h3>
+                    <div id="quiz-options" class="grid grid-cols-1 gap-3 mb-6"></div>
+                    <div class="flex justify-end">
+                        <button id="quiz-next-btn" onclick="nextQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl transition text-sm font-semibold hidden shadow-md shadow-blue-200">
+                            Câu tiếp theo <i class="fas fa-arrow-right ml-1.5 text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="grammar" class="tab-content hidden">
+            <div class="max-w-3xl mx-auto space-y-6">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Sổ tay cấu trúc ngữ pháp</h2>
+                    <p class="text-sm text-gray-500 mt-1">Các cấu trúc nâng cao giúp tối ưu hóa văn phong</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/40">
+                    <div class="flex items-start gap-4">
+                        <div class="bg-amber-50 text-amber-600 p-3 rounded-xl mt-1"><i class="fas fa-star"></i></div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-1">Cấu trúc đảo ngữ với "No sooner ... than"</h3>
+                            <p class="text-sm text-gray-500 mb-3">Diễn tả một hành động vừa mới xảy ra thì hành động khác xen vào ngay lập tức (Vừa mới... thì...).</p>
+                            <div class="bg-slate-950 text-emerald-400 font-mono text-xs sm:text-sm p-3 rounded-xl mb-3 overflow-x-auto">
+                                No sooner + Had + S + V3/ed + than + S + V2/ed
+                            </div>
+                            <p class="text-sm text-gray-700 italic"><strong class="text-gray-900">Ví dụ:</strong> No sooner had we implemented the code than the server crashed.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/40">
+                    <div class="flex items-start gap-4">
+                        <div class="bg-purple-50 text-purple-600 p-3 rounded-xl mt-1"><i class="fas fa-star"></i></div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-1">Cấu trúc giả định với "It is crucial that"</h3>
+                            <p class="text-sm text-gray-500 mb-3">Dùng để nhấn mạnh sự quan trọng, cấp bách cực kỳ của một sự việc nào đó.</p>
+                            <div class="bg-slate-950 text-emerald-400 font-mono text-xs sm:text-sm p-3 rounded-xl mb-3 overflow-x-auto">
+                                It is crucial that + S + V (nguyên thể không chia)
+                            </div>
+                            <p class="text-sm text-gray-700 italic"><strong class="text-gray-900">Ví dụ:</strong> It is crucial that he master object-oriented programming fundamentals.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-white border-t border-gray-100 py-6 mt-12 text-center text-xs text-gray-400">
+        <p>&copy; 2026 EngHub Project. Được lưu trữ hoàn toàn trên GitHub Pages.</p>
+    </footer>
+
+    <script>
+        // Dữ liệu từ vựng (Có thể dễ dàng mở rộng thêm ở đây)
+        const vocabulary = [
+            { word: "Implement", type: "verb", detail: "Triển khai, thực hiện một kế hoạch/hệ thống", example: "We need to implement a new security protocol for the website." },
+            { word: "Ambiguous", type: "adjective", detail: "Mơ hồ, nhập nhằng, không rõ ràng", example: "The error message was too ambiguous to resolve immediately." },
+            { word: "Efficiency", type: "noun", detail: "Hiệu suất, sự hiệu quả công việc", example: "Optimizing the database structure will increase application efficiency." },
+            { word: "Redundant", type: "adjective", detail: "Dư thừa, không cần thiết", example: "Removing redundant variables makes the script run significantly cleaner." },
+            { word: "Simultaneous", type: "adjective", detail: "Đồng thời, xảy ra cùng một lúc", example: "The platform handles thousands of simultaneous users perfectly." }
+        ];
+
+        // Dữ liệu câu hỏi trắc nghiệm
+        const quizQuestions = [
+            { q: "Từ nào dưới đây mang ý nghĩa 'triển khai, thực hiện một kế hoạch/hệ thống'?", a: ["Compile", "Implement", "Inherit", "Execute"], correct: 1 },
+            { q: "Từ nào trái nghĩa với từ 'clear, obvious' (rõ ràng)?", a: ["Ambiguous", "Redundant", "Efficient", "Simultaneous"], correct: 0 },
+            { q: "Điền vào chỗ trống: 'Refactoring code eliminates ______ lines and functions.'", a: ["efficient", "redundant", "essential", "simultaneous"], correct: 1 }
+        ];
+
+        let currentCardIndex = 0;
+        let currentQuizIndex = 0;
+        let score = 0;
+
+        // Xử lý chuyển Tab mượt mà
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.replace('block', 'hidden'));
+            document.getElementById(tabId).classList.replace('hidden', 'block');
+            
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('text-blue-600', 'bg-white', 'shadow-sm');
+                b.classList.add('text-gray-600');
+            });
+            btn.classList.add('text-blue-600', 'bg-white', 'shadow-sm');
+            btn.classList.remove('text-gray-600');
+        }
+
+        // Logic điều khiển Flashcard
+        function updateCard() {
+            const card = vocabulary[currentCardIndex];
+            document.getElementById('card-word').innerText = card.word;
+            document.getElementById('card-type').innerText = `(${card.type})`;
+            document.getElementById('card-detail').innerText = card.detail;
+            document.getElementById('card-example').innerText = `Ví dụ: ${card.example}`;
+            document.getElementById('card-progress').innerText = `${currentCardIndex + 1} / ${vocabulary.length}`;
+            document.getElementById('flashcard').classList.remove('flipped');
+        }
+
+        function flipCard() {
+            document.getElementById('flashcard').classList.toggle('flipped');
+        }
+
+        function nextCard() {
+            currentCardIndex = (currentCardIndex + 1) % vocabulary.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            currentCardIndex = (currentCardIndex - 1 + vocabulary.length) % vocabulary.length;
+            updateCard();
+        }
+
+        // Logic điều khiển Quiz
+        function loadQuiz() {
+            if(currentQuizIndex >= quizQuestions.length) {
+                document.getElementById('quiz-box').innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="inline-flex bg-yellow-50 text-yellow-500 p-4 rounded-full mb-4">
+                            <i class="fas fa-trophy text-4xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Hoàn thành bài trắc nghiệm!</h3>
+                        <p class="text-gray-500 mb-6">Kết quả của bạn đạt: <span class="font-bold text-blue-600">${score}/${quizQuestions.length}</span></p>
+                        <button onclick="resetQuiz()" class="bg-gray-900 hover:bg-gray-800 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition shadow-md">Làm lại bài test</button>
+                    </div>
+                `;
+                return;
+            }
+            const qData = quizQuestions[currentQuizIndex];
+            document.getElementById('quiz-question').innerText = `Câu ${currentQuizIndex + 1}: ${qData.q}`;
+            const optionsDiv = document.getElementById('quiz-options');
+            optionsDiv.innerHTML = '';
+            
+            qData.a.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left px-5 py-3.5 border border-gray-200 rounded-xl hover:bg-slate-50 hover:border-gray-300 transition duration-200 text-sm font-medium focus:outline-none";
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(idx, btn);
+                optionsDiv.appendChild(btn);
+            });
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+        }
+
+        function checkAnswer(selectedIdx, btnElement) {
+            const qData = quizQuestions[currentQuizIndex];
+            const options = document.getElementById('quiz-options').children;
+            
+            for(let btn of options) { btn.disabled = true; }
+            
+            if(selectedIdx === qData.correct) {
+                btnElement.classList.replace('hover:bg-slate-50', 'bg-emerald-50');
+                btnElement.classList.add('border-emerald-400', 'text-emerald-700');
+                score++;
+                document.getElementById('quiz-score-badge').innerText = `Điểm: ${score}`;
+            } else {
+                btnElement.classList.replace('hover:bg-slate-50', 'bg-rose-50');
+                btnElement.classList.add('border-rose-400', 'text-rose-700');
+                
+                options[qData.correct].classList.replace('hover:bg-slate-50', 'bg-emerald-50');
+                options[qData.correct].classList.add('border-emerald-400', 'text-emerald-700');
+            }
+            document.getElementById('quiz-next-btn').classList.remove('hidden');
+        }
+
+        function nextQuiz() {
+            currentQuizIndex++;
+            loadQuiz();
+        }
+
+        function resetQuiz() {
+            currentQuizIndex = 0;
+            score = 0;
+            document.getElementById('quiz-score-badge').innerText = `Điểm: 0`;
+            document.getElementById('quiz-box').innerHTML = `
+                <h3 id="quiz-question" class="text-lg font-semibold mb-6 text-gray-800 leading-snug"></h3>
+                <div id="quiz-options" class="grid grid-cols-1 gap-3 mb-6"></div>
+                <div class="flex justify-end">
+                    <button id="quiz-next-btn" onclick="nextQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl transition text-sm font-semibold hidden">Câu tiếp theo <i class="fas fa-arrow-right ml-1.5 text-xs"></i></button>
+                </div>
+            `;
+            loadQuiz();
+        }
+
+        // Khởi tạo trạng thái ban đầu khi tải trang
+        window.onload = () => {
+            updateCard();
+            loadQuiz();
+        };
+    </script>
+</body>
+</html>
