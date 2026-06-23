@@ -29,7 +29,7 @@
                 <div class="bg-blue-600 text-white p-2 rounded-xl shadow-md shadow-blue-200">
                     <i class="fas fa-graduation-cap text-xl"></i>
                 </div>
-                <h1 class="text-xl font-bold text-gray-900 tracking-tight">EngHub <span class="text-blue-600 text-sm font-medium">v1.0</span></h1>
+                <h1 class="text-xl font-bold text-gray-900 tracking-tight">EngHub <span class="text-blue-600 text-sm font-medium">v1.1</span></h1>
             </div>
             <nav class="flex gap-2 bg-gray-100 p-1 rounded-xl">
                 <button onclick="switchTab('flashcards', this)" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold text-blue-600 bg-white shadow-sm transition">
@@ -47,17 +47,31 @@
 
     <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-8">
         
+        <!-- FLASHCARDS SECTION -->
         <section id="flashcards" class="tab-content block">
             <div class="max-w-md mx-auto">
                 <div class="text-center mb-6">
                     <h2 class="text-2xl font-bold text-gray-900">Thẻ từ vựng thông minh</h2>
-                    <p class="text-sm text-gray-500 mt-1">Bấm vào thẻ để lật xem định nghĩa và ví dụ thực tế</p>
+                    <p class="text-sm text-gray-500 mt-1">Chọn chủ đề học tập phù hợp với bạn bên dưới</p>
+                    
+                    <!-- Bộ lọc chủ đề (Category Filter) -->
+                    <div class="mt-4 flex justify-center">
+                        <select id="category-select" onchange="filterVocabulary()" class="bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-xl text-sm font-medium shadow-sm focus:outline-none focus:border-blue-500">
+                            <option value="all">Tất cả chủ đề</option>
+                            <option value="it">Công nghệ & Lập trình (IT)</option>
+                            <option value="oxford">Giao tiếp thông dụng (Oxford)</option>
+                            <option value="idioms">Thành ngữ thú vị (Idioms)</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div id="flashcard" onclick="flipCard()" class="flip-card h-72 w-full cursor-pointer group">
                     <div class="flip-card-inner w-full h-full relative duration-500 rounded-2xl shadow-xl shadow-gray-200/80">
                         <div class="flip-card-front bg-white rounded-2xl p-8 flex flex-col justify-between border border-gray-100">
-                            <span class="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full w-max">Vocabulary</span>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full w-max">Vocabulary</span>
+                                <span id="card-cat-badge" class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider bg-gray-100 px-2 py-0.5 rounded-md"></span>
+                            </div>
                             <div class="text-center py-4">
                                 <h3 id="card-word" class="text-3xl font-bold text-gray-900 tracking-tight"></h3>
                                 <p id="card-type" class="text-sm text-gray-400 italic mt-1"></p>
@@ -91,6 +105,7 @@
             </div>
         </section>
 
+        <!-- QUIZ SECTION -->
         <section id="quiz" class="tab-content hidden">
             <div class="max-w-2xl mx-auto bg-white rounded-2xl p-6 sm:p-8 shadow-xl shadow-gray-200/50 border border-gray-100">
                 <div class="flex justify-between items-center border-b border-gray-100 pb-4 mb-6">
@@ -109,6 +124,7 @@
             </div>
         </section>
 
+        <!-- GRAMMAR SECTION -->
         <section id="grammar" class="tab-content hidden">
             <div class="max-w-3xl mx-auto space-y-6">
                 <div class="text-center mb-6">
@@ -146,20 +162,34 @@
     </main>
 
     <footer class="bg-white border-t border-gray-100 py-6 mt-12 text-center text-xs text-gray-400">
-        <p>&copy; 2026 EngHub Project. Được lưu trữ hoàn toàn trên GitHub Pages.</p>
+        <p>&copy; 2026 EngHub Project. Được thiết kế tối ưu và lưu trữ linh hoạt.</p>
     </footer>
 
     <script>
-        // Dữ liệu từ vựng (Có thể dễ dàng mở rộng thêm ở đây)
-        const vocabulary = [
-            { word: "Implement", type: "verb", detail: "Triển khai, thực hiện một kế hoạch/hệ thống", example: "We need to implement a new security protocol for the website." },
-            { word: "Ambiguous", type: "adjective", detail: "Mơ hồ, nhập nhằng, không rõ ràng", example: "The error message was too ambiguous to resolve immediately." },
-            { word: "Efficiency", type: "noun", detail: "Hiệu suất, sự hiệu quả công việc", example: "Optimizing the database structure will increase application efficiency." },
-            { word: "Redundant", type: "adjective", detail: "Dư thừa, không cần thiết", example: "Removing redundant variables makes the script run significantly cleaner." },
-            { word: "Simultaneous", type: "adjective", detail: "Đồng thời, xảy ra cùng một lúc", example: "The platform handles thousands of simultaneous users perfectly." }
+        // Dữ liệu kho từ vựng gốc - Đã được phân loại danh mục (category) rõ ràng để dễ mở rộng
+        const masterVocabulary = [
+            // CHỦ ĐỀ: IT & LẬP TRÌNH
+            { word: "Implement", type: "verb", detail: "Triển khai, thực hiện một kế hoạch/hệ thống", example: "We need to implement a new security protocol for the website.", category: "it" },
+            { word: "Ambiguous", type: "adjective", detail: "Mơ hồ, nhập nhằng, không rõ ràng", example: "The error message was too ambiguous to resolve immediately.", category: "it" },
+            { word: "Efficiency", type: "noun", detail: "Hiệu suất, sự hiệu quả công việc", example: "Optimizing the database structure will increase application efficiency.", category: "it" },
+            { word: "Redundant", type: "adjective", detail: "Dư thừa, không cần thiết", example: "Removing redundant variables makes the script run significantly cleaner.", category: "it" },
+            { word: "Simultaneous", type: "adjective", detail: "Đồng thời, xảy ra cùng một lúc", example: "The platform handles thousands of simultaneous users perfectly.", category: "it" },
+            
+            // CHỦ ĐỀ: OXFORD THÔNG DỤNG
+            { word: "Acquire", type: "verb", detail: "Thu được, đạt được, giành được (kiến thức, kỹ năng)", example: "She managed to acquire a good knowledge of English in just one year.", category: "oxford" },
+            { word: "Evaluate", type: "verb", detail: "Đánh giá, định giá chất lượng/giá trị", example: "The research project will evaluate the long-term effects of climate change.", category: "oxford" },
+            { word: "Resilient", type: "adjective", detail: "Kiên cường, có khả năng phục hồi nhanh chóng", example: "He is a resilient businessman who defeated every failure.", category: "oxford" },
+            { word: "Pragmatic", type: "adjective", detail: "Thực tế, thực dụng (giải quyết dựa trên thực tiễn)", example: "We need to take a pragmatic approach to management issues.", category: "oxford" },
+
+            // CHỦ ĐỀ: IDIOMS
+            { word: "Bite the bullet", type: "idiom", detail: "Cắn răng chịu đựng, đối mặt với khó khăn không thể tránh", example: "I hate going to the dentist, but I'll just have to bite the bullet.", category: "idioms" },
+            { word: "Break a leg", type: "idiom", detail: "Chúc may mắn (thường dùng trong nghệ thuật/biểu diễn)", example: "Break a leg tonight! I know your presentation will be great.", category: "idioms" }
         ];
 
-        // Dữ liệu câu hỏi trắc nghiệm
+        // Biến lưu trữ từ vựng đang hiển thị sau khi lọc
+        let vocabulary = [...masterVocabulary];
+
+        // Dữ liệu câu hỏi trắc nghiệm (Tự động sinh hoặc cấu hình cố định)
         const quizQuestions = [
             { q: "Từ nào dưới đây mang ý nghĩa 'triển khai, thực hiện một kế hoạch/hệ thống'?", a: ["Compile", "Implement", "Inherit", "Execute"], correct: 1 },
             { q: "Từ nào trái nghĩa với từ 'clear, obvious' (rõ ràng)?", a: ["Ambiguous", "Redundant", "Efficient", "Simultaneous"], correct: 0 },
@@ -170,10 +200,14 @@
         let currentQuizIndex = 0;
         let score = 0;
 
-        // Xử lý chuyển Tab mượt mà
+        // Xử lý chuyển Tab
         function switchTab(tabId, btn) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.replace('block', 'hidden'));
-            document.getElementById(tabId).classList.replace('hidden', 'block');
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('block');
+                el.classList.add('hidden');
+            });
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById(tabId).classList.add('block');
             
             document.querySelectorAll('.tab-btn').forEach(b => {
                 b.classList.remove('text-blue-600', 'bg-white', 'shadow-sm');
@@ -183,29 +217,58 @@
             btn.classList.remove('text-gray-600');
         }
 
+        // Bộ lọc dữ liệu Flashcard theo chủ đề
+        function filterVocabulary() {
+            const selectedCat = document.getElementById('category-select').value;
+            if (selectedCat === 'all') {
+                vocabulary = [...masterVocabulary];
+            } else {
+                vocabulary = masterVocabulary.filter(item => item.category === selectedCat);
+            }
+            currentCardIndex = 0; // Reset về thẻ đầu tiên của danh mục mới
+            updateCard();
+        }
+
         // Logic điều khiển Flashcard
         function updateCard() {
+            if (vocabulary.length === 0) {
+                document.getElementById('card-word').innerText = "Trống";
+                document.getElementById('card-type').innerText = "";
+                document.getElementById('card-detail').innerText = "Không có từ vựng nào trong chủ đề này.";
+                document.getElementById('card-example').innerText = "";
+                document.getElementById('card-progress').innerText = "0 / 0";
+                document.getElementById('card-cat-badge').innerText = "None";
+                return;
+            }
+            
             const card = vocabulary[currentCardIndex];
             document.getElementById('card-word').innerText = card.word;
             document.getElementById('card-type').innerText = `(${card.type})`;
             document.getElementById('card-detail').innerText = card.detail;
             document.getElementById('card-example').innerText = `Ví dụ: ${card.example}`;
             document.getElementById('card-progress').innerText = `${currentCardIndex + 1} / ${vocabulary.length}`;
+            document.getElementById('card-cat-badge').innerText = card.category;
             document.getElementById('flashcard').classList.remove('flipped');
         }
 
         function flipCard() {
-            document.getElementById('flashcard').classList.toggle('flipped');
+            if (vocabulary.length > 0) {
+                document.getElementById('flashcard').classList.toggle('flipped');
+            }
         }
 
         function nextCard() {
-            currentCardIndex = (currentCardIndex + 1) % vocabulary.length;
-            updateCard();
+            if (vocabulary.length > 0) {
+                currentCardIndex = (currentCardIndex + 1) % vocabulary.length;
+                updateCard();
+            }
         }
 
         function prevCard() {
-            currentCardIndex = (currentCardIndex - 1 + vocabulary.length) % vocabulary.length;
-            updateCard();
+            if (vocabulary.length > 0) {
+                currentCardIndex = (currentCardIndex - 1 + vocabulary.length) % vocabulary.length;
+                updateCard();
+            }
         }
 
         // Logic điều khiển Quiz
