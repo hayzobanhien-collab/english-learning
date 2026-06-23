@@ -29,7 +29,7 @@
                 <div class="bg-blue-600 text-white p-2 rounded-xl shadow-md shadow-blue-200">
                     <i class="fas fa-graduation-cap text-xl"></i>
                 </div>
-                <h1 class="text-xl font-bold text-gray-900 tracking-tight">EngHub <span class="text-blue-600 text-sm font-medium">v1.0</span></h1>
+                <h1 class="text-xl font-bold text-gray-900 tracking-tight">EngHub <span class="text-blue-600 text-sm font-medium">v2.0</span></h1>
             </div>
             <nav class="flex gap-2 bg-gray-100 p-1 rounded-xl">
                 <button onclick="switchTab('flashcards', this)" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold text-blue-600 bg-white shadow-sm transition">
@@ -47,14 +47,39 @@
 
     <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-8">
         
+        <!-- FLASHCARDS TAB -->
         <section id="flashcards" class="tab-content block">
-            <div class="max-w-md mx-auto">
+            <div class="max-w-2xl mx-auto">
                 <div class="text-center mb-6">
                     <h2 class="text-2xl font-bold text-gray-900">Thẻ từ vựng thông minh</h2>
                     <p class="text-sm text-gray-500 mt-1">Bấm vào thẻ để lật xem định nghĩa và ví dụ thực tế</p>
                 </div>
-                
-                <div id="flashcard" onclick="flipCard()" class="flip-card h-72 w-full cursor-pointer group">
+
+                <!-- Search & Filter -->
+                <div class="bg-white rounded-xl p-4 mb-6 shadow-sm border border-gray-100">
+                    <div class="flex gap-3 flex-col sm:flex-row">
+                        <input 
+                            type="text" 
+                            id="search-input" 
+                            placeholder="🔍 Tìm kiếm từ..." 
+                            class="flex-grow px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onkeyup="filterVocabulary()"
+                        >
+                        <select id="type-filter" class="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="filterVocabulary()">
+                            <option value="">Tất cả loại</option>
+                            <option value="noun">Danh từ</option>
+                            <option value="verb">Động từ</option>
+                            <option value="adjective">Tính từ</option>
+                            <option value="adverb">Trạng từ</option>
+                        </select>
+                        <button onclick="resetFilters()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition text-sm font-medium">
+                            <i class="fas fa-redo mr-1"></i>Đặt lại
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Flashcard -->
+                <div id="flashcard" onclick="flipCard()" class="flip-card h-72 w-full cursor-pointer group mb-6">
                     <div class="flip-card-inner w-full h-full relative duration-500 rounded-2xl shadow-xl shadow-gray-200/80">
                         <div class="flip-card-front bg-white rounded-2xl p-8 flex flex-col justify-between border border-gray-100">
                             <span class="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full w-max">Vocabulary</span>
@@ -79,11 +104,11 @@
                     </div>
                 </div>
 
-                <div class="flex justify-between items-center mt-6 px-2">
+                <div class="flex justify-between items-center px-2">
                     <button onclick="prevCard()" class="bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl shadow-sm transition flex items-center gap-2 text-sm font-medium">
                         <i class="fas fa-chevron-left text-xs"></i> Trước đó
                     </button>
-                    <span id="card-progress" class="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">1 / 5</span>
+                    <span id="card-progress" class="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">1 / 0</span>
                     <button onclick="nextCard()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl shadow-md shadow-blue-200 transition flex items-center gap-2 text-sm font-medium">
                         Tiếp theo <i class="fas fa-chevron-right text-xs"></i>
                     </button>
@@ -91,6 +116,7 @@
             </div>
         </section>
 
+        <!-- QUIZ TAB -->
         <section id="quiz" class="tab-content hidden">
             <div class="max-w-2xl mx-auto bg-white rounded-2xl p-6 sm:p-8 shadow-xl shadow-gray-200/50 border border-gray-100">
                 <div class="flex justify-between items-center border-b border-gray-100 pb-4 mb-6">
@@ -109,6 +135,7 @@
             </div>
         </section>
 
+        <!-- GRAMMAR TAB -->
         <section id="grammar" class="tab-content hidden">
             <div class="max-w-3xl mx-auto space-y-6">
                 <div class="text-center mb-6">
@@ -150,27 +177,54 @@
     </footer>
 
     <script>
-        // Dữ liệu từ vựng (Có thể dễ dàng mở rộng thêm ở đây)
-        const vocabulary = [
-            { word: "Implement", type: "verb", detail: "Triển khai, thực hiện một kế hoạch/hệ thống", example: "We need to implement a new security protocol for the website." },
-            { word: "Ambiguous", type: "adjective", detail: "Mơ hồ, nhập nhằng, không rõ ràng", example: "The error message was too ambiguous to resolve immediately." },
-            { word: "Efficiency", type: "noun", detail: "Hiệu suất, sự hiệu quả công việc", example: "Optimizing the database structure will increase application efficiency." },
-            { word: "Redundant", type: "adjective", detail: "Dư thừa, không cần thiết", example: "Removing redundant variables makes the script run significantly cleaner." },
-            { word: "Simultaneous", type: "adjective", detail: "Đồng thời, xảy ra cùng một lúc", example: "The platform handles thousands of simultaneous users perfectly." }
-        ];
-
-        // Dữ liệu câu hỏi trắc nghiệm
-        const quizQuestions = [
-            { q: "Từ nào dưới đây mang ý nghĩa 'triển khai, thực hiện một kế hoạch/hệ thống'?", a: ["Compile", "Implement", "Inherit", "Execute"], correct: 1 },
-            { q: "Từ nào trái nghĩa với từ 'clear, obvious' (rõ ràng)?", a: ["Ambiguous", "Redundant", "Efficient", "Simultaneous"], correct: 0 },
-            { q: "Điền vào chỗ trống: 'Refactoring code eliminates ______ lines and functions.'", a: ["efficient", "redundant", "essential", "simultaneous"], correct: 1 }
-        ];
-
+        let allVocabulary = [];
+        let filteredVocabulary = [];
         let currentCardIndex = 0;
         let currentQuizIndex = 0;
         let score = 0;
+        let quizQuestions = [];
 
-        // Xử lý chuyển Tab mượt mà
+        // Tải từ vựng từ JSON
+        async function loadVocabulary() {
+            try {
+                const response = await fetch('vocabulary.json');
+                const data = await response.json();
+                allVocabulary = data.vocabulary;
+                filteredVocabulary = [...allVocabulary];
+                updateCard();
+                generateQuiz();
+            } catch (error) {
+                console.error('Lỗi khi tải vocabulary.json:', error);
+                alert('Không thể tải dữ liệu từ vựng. Vui lòng kiểm tra file vocabulary.json');
+            }
+        }
+
+        // Tìm kiếm và lọc từ vựng
+        function filterVocabulary() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const typeFilter = document.getElementById('type-filter').value;
+
+            filteredVocabulary = allVocabulary.filter(item => {
+                const matchSearch = item.word.toLowerCase().includes(searchTerm) || 
+                                   item.detail.toLowerCase().includes(searchTerm);
+                const matchType = !typeFilter || item.type === typeFilter;
+                return matchSearch && matchType;
+            });
+
+            currentCardIndex = 0;
+            updateCard();
+        }
+
+        // Đặt lại bộ lọc
+        function resetFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('type-filter').value = '';
+            filteredVocabulary = [...allVocabulary];
+            currentCardIndex = 0;
+            updateCard();
+        }
+
+        // Xử lý chuyển Tab
         function switchTab(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.replace('block', 'hidden'));
             document.getElementById(tabId).classList.replace('hidden', 'block');
@@ -181,16 +235,29 @@
             });
             btn.classList.add('text-blue-600', 'bg-white', 'shadow-sm');
             btn.classList.remove('text-gray-600');
+
+            if (tabId === 'quiz') {
+                loadQuiz();
+            }
         }
 
         // Logic điều khiển Flashcard
         function updateCard() {
-            const card = vocabulary[currentCardIndex];
+            if (filteredVocabulary.length === 0) {
+                document.getElementById('card-word').innerText = 'Không tìm thấy';
+                document.getElementById('card-type').innerText = '';
+                document.getElementById('card-detail').innerText = 'Không có từ vựng phù hợp';
+                document.getElementById('card-example').innerText = '';
+                document.getElementById('card-progress').innerText = '0 / 0';
+                return;
+            }
+
+            const card = filteredVocabulary[currentCardIndex];
             document.getElementById('card-word').innerText = card.word;
             document.getElementById('card-type').innerText = `(${card.type})`;
             document.getElementById('card-detail').innerText = card.detail;
             document.getElementById('card-example').innerText = `Ví dụ: ${card.example}`;
-            document.getElementById('card-progress').innerText = `${currentCardIndex + 1} / ${vocabulary.length}`;
+            document.getElementById('card-progress').innerText = `${currentCardIndex + 1} / ${filteredVocabulary.length}`;
             document.getElementById('flashcard').classList.remove('flipped');
         }
 
@@ -199,18 +266,43 @@
         }
 
         function nextCard() {
-            currentCardIndex = (currentCardIndex + 1) % vocabulary.length;
+            if (filteredVocabulary.length === 0) return;
+            currentCardIndex = (currentCardIndex + 1) % filteredVocabulary.length;
             updateCard();
         }
 
         function prevCard() {
-            currentCardIndex = (currentCardIndex - 1 + vocabulary.length) % vocabulary.length;
+            if (filteredVocabulary.length === 0) return;
+            currentCardIndex = (currentCardIndex - 1 + filteredVocabulary.length) % filteredVocabulary.length;
             updateCard();
+        }
+
+        // Tạo câu hỏi quiz tự động từ từ vựng
+        function generateQuiz() {
+            quizQuestions = [];
+            const vocab = allVocabulary.slice(0, Math.min(10, allVocabulary.length));
+            
+            vocab.forEach((item, idx) => {
+                const wrongAnswers = allVocabulary
+                    .filter(v => v.word !== item.word)
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 3)
+                    .map(v => v.detail);
+                
+                const options = [item.detail, ...wrongAnswers].sort(() => Math.random() - 0.5);
+                const correctIdx = options.indexOf(item.detail);
+                
+                quizQuestions.push({
+                    q: `Từ "${item.word}" có ý nghĩa gì?`,
+                    a: options,
+                    correct: correctIdx
+                });
+            });
         }
 
         // Logic điều khiển Quiz
         function loadQuiz() {
-            if(currentQuizIndex >= quizQuestions.length) {
+            if (currentQuizIndex >= quizQuestions.length) {
                 document.getElementById('quiz-box').innerHTML = `
                     <div class="text-center py-8">
                         <div class="inline-flex bg-yellow-50 text-yellow-500 p-4 rounded-full mb-4">
@@ -223,6 +315,7 @@
                 `;
                 return;
             }
+            
             const qData = quizQuestions[currentQuizIndex];
             document.getElementById('quiz-question').innerText = `Câu ${currentQuizIndex + 1}: ${qData.q}`;
             const optionsDiv = document.getElementById('quiz-options');
@@ -242,9 +335,9 @@
             const qData = quizQuestions[currentQuizIndex];
             const options = document.getElementById('quiz-options').children;
             
-            for(let btn of options) { btn.disabled = true; }
+            for (let btn of options) { btn.disabled = true; }
             
-            if(selectedIdx === qData.correct) {
+            if (selectedIdx === qData.correct) {
                 btnElement.classList.replace('hover:bg-slate-50', 'bg-emerald-50');
                 btnElement.classList.add('border-emerald-400', 'text-emerald-700');
                 score++;
@@ -272,16 +365,17 @@
                 <h3 id="quiz-question" class="text-lg font-semibold mb-6 text-gray-800 leading-snug"></h3>
                 <div id="quiz-options" class="grid grid-cols-1 gap-3 mb-6"></div>
                 <div class="flex justify-end">
-                    <button id="quiz-next-btn" onclick="nextQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl transition text-sm font-semibold hidden shadow-md shadow-blue-200">Câu tiếp theo <i class="fas fa-arrow-right ml-1.5 text-xs"></i></button>
+                    <button id="quiz-next-btn" onclick="nextQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl transition text-sm font-semibold hidden shadow-md shadow-blue-200">
+                        Câu tiếp theo <i class="fas fa-arrow-right ml-1.5 text-xs"></i>
+                    </button>
                 </div>
             `;
             loadQuiz();
         }
 
-        // Khởi tạo trạng thái ban đầu khi tải trang
+        // Khởi tạo khi tải trang
         window.onload = () => {
-            updateCard();
-            loadQuiz();
+            loadVocabulary();
         };
     </script>
 </body>
