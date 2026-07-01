@@ -19,26 +19,38 @@
             top: 0; left: 0; width: 100%; height: 100%;
         }
         .flip-card-back { transform: rotateY(180deg); }
+        
+        .level-badge {
+            @apply inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide;
+        }
+        .level-a1 { @apply bg-green-100 text-green-700; }
+        .level-a2 { @apply bg-blue-100 text-blue-700; }
+        .level-b1 { @apply bg-orange-100 text-orange-700; }
+        .level-b2 { @apply bg-red-100 text-red-700; }
     </style>
 </head>
 <body class="bg-slate-50 font-sans text-gray-800 antialiased min-h-screen flex flex-col">
 
     <header class="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <div class="bg-blue-600 text-white p-2 rounded-xl shadow-md shadow-blue-200">
-                    <i class="fas fa-graduation-cap text-xl"></i>
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-600 text-white p-2 rounded-xl shadow-md shadow-blue-200">
+                        <i class="fas fa-graduation-cap text-xl"></i>
+                    </div>
+                    <h1 class="text-xl font-bold text-gray-900 tracking-tight">EngHub <span class="text-blue-600 text-sm font-medium">v3.0</span></h1>
                 </div>
-                <h1 class="text-xl font-bold text-gray-900 tracking-tight">EngHub <span class="text-blue-600 text-sm font-medium">v2.0</span></h1>
             </div>
-            <nav class="flex gap-2 bg-gray-100 p-1 rounded-xl">
-                <button onclick="switchTab('flashcards', this)" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold text-blue-600 bg-white shadow-sm transition">
-                    <i class="fas fa-clone mr-2"></i>Flashcards
+            
+            <!-- Navigation Tabs -->
+            <nav class="flex gap-2 bg-gray-100 p-1 rounded-xl overflow-x-auto">
+                <button onclick="switchTab('vocabulary', this)" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold text-blue-600 bg-white shadow-sm transition whitespace-nowrap">
+                    <i class="fas fa-book mr-2"></i>Từ vựng
                 </button>
-                <button onclick="switchTab('quiz', this)" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 transition">
+                <button onclick="switchTab('quiz', this)" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 transition whitespace-nowrap">
                     <i class="fas fa-tasks mr-2"></i>Trắc nghiệm
                 </button>
-                <button onclick="switchTab('grammar', this)" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 transition">
+                <button onclick="switchTab('grammar', this)" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 transition whitespace-nowrap">
                     <i class="fas fa-book-open mr-2"></i>Ngữ pháp
                 </button>
             </nav>
@@ -47,16 +59,66 @@
 
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8">
         
-        <!-- FLASHCARDS TAB -->
-        <section id="flashcards" class="tab-content block">
+        <!-- VOCABULARY TAB -->
+        <section id="vocabulary" class="tab-content block">
             <div class="w-full">
                 <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-900">Thẻ từ vựng thông minh</h2>
-                    <p class="text-sm text-gray-500 mt-2">Bấm vào thẻ để lật xem định nghĩa, ví dụ và phát âm</p>
+                    <h2 class="text-3xl font-bold text-gray-900">Từ vựng theo Level</h2>
+                    <p class="text-sm text-gray-500 mt-2">Chọn level phù hợp để bắt đầu học</p>
+                </div>
+
+                <!-- Level Selection -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div onclick="selectLevel('A1')" class="level-card cursor-pointer p-6 rounded-2xl border-2 border-gray-200 hover:border-green-500 hover:shadow-lg transition group bg-white">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="level-badge level-a1">A1</span>
+                            <i class="fas fa-star text-yellow-400 group-hover:scale-110 transition"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">Beginner</h3>
+                        <p class="text-xs text-gray-500 mt-1">Từ cơ bản, hàng ngày</p>
+                        <div class="mt-3 text-sm text-gray-600"><i class="fas fa-book-open mr-1"></i><span id="count-A1">0</span> từ</div>
+                    </div>
+
+                    <div onclick="selectLevel('A2')" class="level-card cursor-pointer p-6 rounded-2xl border-2 border-gray-200 hover:border-blue-500 hover:shadow-lg transition group bg-white">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="level-badge level-a2">A2</span>
+                            <i class="fas fa-star-and-crescent text-yellow-400 group-hover:scale-110 transition"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">Elementary</h3>
+                        <p class="text-xs text-gray-500 mt-1">Từ vựng tiền trung cấp</p>
+                        <div class="mt-3 text-sm text-gray-600"><i class="fas fa-book-open mr-1"></i><span id="count-A2">0</span> từ</div>
+                    </div>
+
+                    <div onclick="selectLevel('B1')" class="level-card cursor-pointer p-6 rounded-2xl border-2 border-gray-200 hover:border-orange-500 hover:shadow-lg transition group bg-white">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="level-badge level-b1">B1</span>
+                            <i class="fas fa-star-half text-yellow-400 group-hover:scale-110 transition"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">Intermediate</h3>
+                        <p class="text-xs text-gray-500 mt-1">Từ vựng trung cấp</p>
+                        <div class="mt-3 text-sm text-gray-600"><i class="fas fa-book-open mr-1"></i><span id="count-B1">0</span> từ</div>
+                    </div>
+
+                    <div onclick="selectLevel('B2')" class="level-card cursor-pointer p-6 rounded-2xl border-2 border-gray-200 hover:border-red-500 hover:shadow-lg transition group bg-white">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="level-badge level-b2">B2</span>
+                            <i class="fas fa-crown text-yellow-400 group-hover:scale-110 transition"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">Upper-Inter</h3>
+                        <p class="text-xs text-gray-500 mt-1">Từ vựng nâng cao</p>
+                        <div class="mt-3 text-sm text-gray-600"><i class="fas fa-book-open mr-1"></i><span id="count-B2">0</span> từ</div>
+                    </div>
                 </div>
 
                 <!-- Search & Filter -->
-                <div class="bg-white rounded-xl p-4 mb-8 shadow-sm border border-gray-100">
+                <div id="vocab-controls" class="bg-white rounded-xl p-4 mb-8 shadow-sm border border-gray-100 hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 id="level-title" class="text-lg font-bold text-gray-900">Từ vựng Level A1</h3>
+                        <button onclick="backToLevels()" class="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition">
+                            <i class="fas fa-arrow-left mr-1"></i>Quay lại
+                        </button>
+                    </div>
+                    
                     <div class="flex gap-3 flex-col sm:flex-row flex-wrap items-end">
                         <div class="flex-grow min-w-[200px]">
                             <label class="text-sm font-medium text-gray-600 block mb-2">🔍 Tìm kiếm từ</label>
@@ -76,8 +138,6 @@
                                 <option value="verb">Động từ</option>
                                 <option value="adjective">Tính từ</option>
                                 <option value="adverb">Trạng từ</option>
-                                <option value="interjection">Thán từ</option>
-                                <option value="pronoun">Đại từ</option>
                             </select>
                         </div>
                         <button onclick="resetFilters()" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition text-sm font-medium">
@@ -95,7 +155,7 @@
                 </div>
 
                 <!-- Pagination -->
-                <div class="flex justify-center gap-2 mt-8">
+                <div id="pagination" class="flex justify-center gap-2 mt-8 hidden">
                     <button onclick="prevPage()" class="px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition">
                         <i class="fas fa-chevron-left"></i> Trang trước
                     </button>
@@ -118,7 +178,7 @@
                     <h3 id="quiz-question" class="text-lg font-semibold mb-6 text-gray-800 leading-snug"></h3>
                     <div id="quiz-options" class="grid grid-cols-1 gap-3 mb-6"></div>
                     <div class="flex justify-end">
-                        <button id="quiz-next-btn" onclick="nextQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl transition text-sm font-semibold hidden shadow-md shadow-blue-200">
+                        <button id="quiz-next-btn" onclick="nextQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl transition text-sm font-semibold hidden shadow-md">
                             Câu tiếp theo <i class="fas fa-arrow-right ml-1.5 text-xs"></i>
                         </button>
                     </div>
@@ -170,6 +230,7 @@
     <script>
         let allVocabulary = [];
         let filteredVocabulary = [];
+        let currentLevel = null;
         let currentPage = 1;
         const cardsPerPage = 12;
         let currentQuizIndex = 0;
@@ -182,13 +243,49 @@
                 const response = await fetch('vocabulary.json');
                 const data = await response.json();
                 allVocabulary = data.vocabulary;
-                filteredVocabulary = [...allVocabulary];
-                displayCards();
+                updateLevelCounts();
                 generateQuiz();
             } catch (error) {
                 console.error('Lỗi khi tải vocabulary.json:', error);
-                document.getElementById('flashcards-grid').innerHTML = '<div class="col-span-full text-center text-red-600"><i class="fas fa-exclamation-circle"></i> Không thể tải dữ liệu từ vựng. Vui lòng kiểm tra file vocabulary.json</div>';
+                document.getElementById('flashcards-grid').innerHTML = '<div class="col-span-full text-center text-red-600"><i class="fas fa-exclamation-circle"></i> Không thể tải dữ liệu</div>';
             }
+        }
+
+        // Cập nhật số lượng từ cho mỗi level
+        function updateLevelCounts() {
+            const levels = ['A1', 'A2', 'B1', 'B2'];
+            levels.forEach(level => {
+                const count = allVocabulary.filter(v => v.level === level).length;
+                document.getElementById(`count-${level}`).textContent = count;
+            });
+        }
+
+        // Chọn level
+        function selectLevel(level) {
+            currentLevel = level;
+            currentPage = 1;
+            allVocabulary.sort(() => Math.random() - 0.5); // Xáo trộn từ
+            filteredVocabulary = allVocabulary.filter(v => v.level === level);
+            
+            // Cập nhật UI
+            document.getElementById('flashcards-grid').innerHTML = '';
+            document.getElementById('vocab-controls').classList.remove('hidden');
+            document.getElementById('pagination').classList.remove('hidden');
+            document.getElementById('level-title').textContent = `Từ vựng Level ${level}`;
+            document.getElementById('search-input').value = '';
+            document.getElementById('type-filter').value = '';
+            
+            displayCards();
+        }
+
+        // Quay lại chọn level
+        function backToLevels() {
+            currentLevel = null;
+            currentPage = 1;
+            filteredVocabulary = [];
+            document.getElementById('flashcards-grid').innerHTML = '';
+            document.getElementById('vocab-controls').classList.add('hidden');
+            document.getElementById('pagination').classList.add('hidden');
         }
 
         // Hiển thị thẻ từ vựng
@@ -222,26 +319,34 @@
             cardDiv.className = 'flip-card h-72 cursor-pointer group';
             cardDiv.id = `card-${index}`;
             
+            const levelColor = {
+                'A1': 'from-green-500 to-green-600',
+                'A2': 'from-blue-500 to-blue-600',
+                'B1': 'from-orange-500 to-orange-600',
+                'B2': 'from-red-500 to-red-600'
+            };
+            
             cardDiv.innerHTML = `
                 <div class="flip-card-inner w-full h-full relative duration-500 rounded-2xl shadow-xl shadow-gray-200/80" onclick="flipCardById('card-${index}')">
                     <div class="flip-card-front bg-white rounded-2xl p-6 flex flex-col justify-between border border-gray-100">
-                        <span class="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full w-max">
+                        <span class="text-xs font-bold uppercase tracking-wider text-gray-600 bg-gray-50 px-2.5 py-1 rounded-full w-max">
                             <i class="fas fa-tag mr-1"></i>${vocab.type}
                         </span>
                         <div class="text-center py-4 flex-grow flex items-center justify-center">
-                            <h3 class="text-2xl font-bold text-gray-900 text-center">${vocab.word}</h3>
+                            <h3 class="text-3xl font-bold text-gray-900 text-center">${vocab.word}</h3>
                         </div>
-                        <div class="text-center text-xs text-gray-400">
-                            <i class="fas fa-sync-alt mr-1"></i> Nhấp để xem
+                        <div class="text-center">
+                            <span class="level-badge ${`level-${vocab.level.toLowerCase()}`}">${vocab.level}</span>
+                            <div class="text-xs text-gray-400 mt-2"><i class="fas fa-sync-alt mr-1"></i> Nhấp để xem</div>
                         </div>
                     </div>
-                    <div class="flip-card-back bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 flex flex-col justify-between text-white">
-                        <span class="text-xs font-bold uppercase tracking-wider text-blue-200 bg-white/10 px-2.5 py-1 rounded-full w-max">Meaning</span>
+                    <div class="flip-card-back bg-gradient-to-br ${levelColor[vocab.level]} rounded-2xl p-6 flex flex-col justify-between text-white">
+                        <span class="text-xs font-bold uppercase tracking-wider text-white/80 bg-white/20 px-2.5 py-1 rounded-full w-max">Meaning</span>
                         <div class="space-y-3 flex-grow flex flex-col justify-center">
                             <p class="text-lg font-semibold text-center leading-relaxed">${vocab.detail}</p>
-                            <p class="text-xs text-blue-100 bg-black/20 p-2 rounded-lg italic text-center">💡 ${vocab.example}</p>
+                            <p class="text-xs text-white/90 bg-black/20 p-2 rounded-lg italic text-center">💡 ${vocab.example}</p>
                         </div>
-                        <div class="text-center text-xs text-blue-200 opacity-80">
+                        <div class="text-center text-xs text-white/80 opacity-80">
                             <i class="fas fa-sync-alt mr-1"></i> Nhấp để quay lại
                         </div>
                     </div>
@@ -264,13 +369,15 @@
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
             const typeFilter = document.getElementById('type-filter').value;
 
-            filteredVocabulary = allVocabulary.filter(item => {
-                const matchSearch = item.word.toLowerCase().includes(searchTerm) || 
-                                   item.detail.toLowerCase().includes(searchTerm) ||
-                                   item.example.toLowerCase().includes(searchTerm);
-                const matchType = !typeFilter || item.type === typeFilter;
-                return matchSearch && matchType;
-            });
+            filteredVocabulary = allVocabulary
+                .filter(v => v.level === currentLevel)
+                .filter(item => {
+                    const matchSearch = item.word.toLowerCase().includes(searchTerm) || 
+                                       item.detail.toLowerCase().includes(searchTerm) ||
+                                       item.example.toLowerCase().includes(searchTerm);
+                    const matchType = !typeFilter || item.type === typeFilter;
+                    return matchSearch && matchType;
+                });
 
             currentPage = 1;
             displayCards();
@@ -280,7 +387,7 @@
         function resetFilters() {
             document.getElementById('search-input').value = '';
             document.getElementById('type-filter').value = '';
-            filteredVocabulary = [...allVocabulary];
+            filteredVocabulary = allVocabulary.filter(v => v.level === currentLevel);
             currentPage = 1;
             displayCards();
         }
@@ -408,7 +515,7 @@
                 <h3 id="quiz-question" class="text-lg font-semibold mb-6 text-gray-800 leading-snug"></h3>
                 <div id="quiz-options" class="grid grid-cols-1 gap-3 mb-6"></div>
                 <div class="flex justify-end">
-                    <button id="quiz-next-btn" onclick="nextQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl transition text-sm font-semibold hidden shadow-md shadow-blue-200">
+                    <button id="quiz-next-btn" onclick="nextQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl transition text-sm font-semibold hidden shadow-md">
                         Câu tiếp theo <i class="fas fa-arrow-right ml-1.5 text-xs"></i>
                     </button>
                 </div>
